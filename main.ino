@@ -12,10 +12,6 @@ CRGB leds[NUM_LEDS];
 
 char text[32] = {0};
 
-// uint64_t address = 0x0000000001;
-
-uint8_t address[6] = { "0001" };
-
 void colorchange(String texts = "");
 void rainbow(String texts = "");
 
@@ -47,28 +43,28 @@ void loop()
         Serial.println();
 
     }
-    String texts = String(text);
-    Serial.println(texts);
+    String textStr = String(text);
+    Serial.println(textStr);
 
     if(texts.startsWith("*")){    
-        colorchange(texts);
+        colorchange(textStr);
     }
     if(texts.startsWith("/")){
-        rainbow(texts);
+        rainbow(textStr);
     }
 }
 
-void colorchange(String texts = "")
+void colorchange(String textcc = "")
 {
     
-    texts.remove(0,1);
+    textcc.remove(0,1);
             
-    int commaIndex = texts.indexOf(',');
-    int secondCommaIndex = texts.indexOf(',', commaIndex + 1);
+    int commaIndex = textcc.indexOf(',');
+    int secondCommaIndex = textcc.indexOf(',', commaIndex + 1);
 
-    String firstValue = texts.substring(0, commaIndex);
-    String secondValue = texts.substring(commaIndex + 1, secondCommaIndex);
-    String thirdValue = texts.substring(secondCommaIndex + 1); // To the end of the string
+    String firstValue = textcc.substring(0, commaIndex);
+    String secondValue = textcc.substring(commaIndex + 1, secondCommaIndex);
+    String thirdValue = textcc.substring(secondCommaIndex + 1); // To the end of the string
 
     int r = firstValue.toInt();
     int g = secondValue.toInt();
@@ -87,16 +83,16 @@ void colorchange(String texts = "")
     }
 }
 
-void rainbow(String texts = "")
+void rainbow(String textrb = "")
 {
-    texts.remove(0,1);
+    textrb.remove(0,1);
             
-    int commaIndex = texts.indexOf(',');
-    int secondCommaIndex = texts.indexOf(',', commaIndex + 1);
+    int commaIndex = textrb.indexOf(',');
+    int secondCommaIndex = textrb.indexOf(',', commaIndex + 1);
 
-    String firstValue = texts.substring(0, commaIndex);
-    String secondValue = texts.substring(commaIndex + 1, secondCommaIndex);
-    String thirdValue = texts.substring(secondCommaIndex + 1); // To the end of the string
+    String firstValue = textrb.substring(0, commaIndex);
+    String secondValue = textrb.substring(commaIndex + 1, secondCommaIndex);
+    String thirdValue = textrb.substring(secondCommaIndex + 1); // To the end of the string
 
     int speed = firstValue.toInt();
     int brightness = secondValue.toInt();
