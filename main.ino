@@ -3,59 +3,55 @@
 #include <RF24.h>
 #include <FastLED.h>
 
+RF24 radio(9, 10); // CE, CSN
 
-RF24 radio(7, 8);  // CE, CSN
+char text[32] = "";
+String textStr = "";
 
 #define LED_PIN     4
 #define NUM_LEDS    30
 CRGB leds[NUM_LEDS];
 
-char text[32] = {0};
+void colorchange(String textcc);
+void rainbow(String textrb);
+void interruptFunc();
 
-void colorchange(String texts = "");
-void rainbow(String texts = "");
 
+void setup() {
 
-void setup()
-{
-    FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
-    while (!Serial);
     Serial.begin(9600);
-    Serial.println("Serial ready");
-  
-    radio.begin();
+    while (!Serial) {
+    }
+    if (!radio.begin()) {
+        Serial.println(F("Radio hardware is not responding!!"));
+    while (1) {}
+    }
+    radio.maskIRQ(1,1,0);
     radio.openReadingPipe(0, 0x0000000001);
+    radio.setPALevel(RF24_PA_MIN);
+    Serial.println("Radio ready");
     radio.startListening();
-
     Serial.println("Listening");
+    FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+    attachInterrupt(0, interruptFunc, FALLING);
 }
 
-void loop()
-{
-    if (radio.available())
-    {
-        int rainbowspeed = 0;
-        int rainbowbrightness = 0;
-        int rainbowsaturation = 0;
+void loop() {
+    if (radio.available()) {
         radio.read(&text, sizeof(text));
-        Serial.print("Received: ");
-        Serial.print(text);
-        Serial.println();
-
+        Serial.println(text);
+        textStr = String(text);
     }
-    String textStr = String(text);
-    Serial.println(textStr);
 
-    if(texts.startsWith("*")){    
+    if(textStr.startsWith("*")){    
         colorchange(textStr);
     }
-    if(texts.startsWith("/")){
+    if(textStr.startsWith("/")){
         rainbow(textStr);
     }
 }
 
-void colorchange(String textcc = "")
-{
+void colorchange(String textcc = ""){
     
     textcc.remove(0,1);
             
@@ -64,27 +60,25 @@ void colorchange(String textcc = "")
 
     String firstValue = textcc.substring(0, commaIndex);
     String secondValue = textcc.substring(commaIndex + 1, secondCommaIndex);
-    String thirdValue = textcc.substring(secondCommaIndex + 1); // To the end of the string
+    String thirdValue = textcc.substring(secondCommaIndex + 1);
 
     int r = firstValue.toInt();
     int g = secondValue.toInt();
     int b = thirdValue.toInt();
 
-    Serial.println(r);
-    Serial.println(g);
-    Serial.println(b);
+    Serial.println("Changing color!");
         
     int i = 0;
-    while (i < 30)
-    {
+    while (i < 30){
         leds[i] = CRGB(r, g, b);
         FastLED.show();
         i++;
     }
+    Serial.println("Color Changed!");
 }
 
-void rainbow(String textrb = "")
-{
+void rainbow(String textrb = ""){
+
     textrb.remove(0,1);
             
     int commaIndex = textrb.indexOf(',');
@@ -92,23 +86,36 @@ void rainbow(String textrb = "")
 
     String firstValue = textrb.substring(0, commaIndex);
     String secondValue = textrb.substring(commaIndex + 1, secondCommaIndex);
-    String thirdValue = textrb.substring(secondCommaIndex + 1); // To the end of the string
+    String thirdValue = textrb.substring(secondCommaIndex + 1);
 
     int speed = firstValue.toInt();
     int brightness = secondValue.toInt();
     int saturation = thirdValue.toInt();
 
-    Serial.println(speed);
-    Serial.println(brightness);
-    Serial.println(saturation);
+    Serial.println("Starting Rainbow animation!");
 
 
 
     for (int j = 0; j < 255; j++) {
         for (int i = 0; i < NUM_LEDS; i++) {
-            leds[i] = CHSV(i - (j * 2), saturation, brightness); /* The higher the value 4 the less fade there is and vice versa */ 
+            leds[i] = CHSV(i - (j * 2), saturation, brightness);
         }
     FastLED.show();
-    delay(speed); /* Change this to your hearts desire, the lower the value the faster your colors move (and vice versa) */
+    delay(speed); 
     }
+    Serial.println("End of rainbow animation!");
+}
+
+void interruptFunc(){
+    Serial.println("Interrupt triggered!");
+    
+    if (radio.available()) {
+        radio.read(&text, sizeof(text));
+        Serial.print("Received: ");
+        Serial.println(text);
+        textStr = String(text);
+    }else{
+        Serial.println("No data");
+    }
+
 }
