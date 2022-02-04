@@ -68,7 +68,7 @@
         "topicType": "msg",
         "className": "",
         "x": 110,
-        "y": 400,
+        "y": 340,
         "wires": [
             [
                 "9d3bd467a8b26baf"
@@ -114,11 +114,11 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 320,
-        "y": 360,
+        "x": 280,
+        "y": 340,
         "wires": [
             [
-                "d25f4b5ec38aa314"
+                "5478c2484f8fd481"
             ]
         ]
     },
@@ -148,14 +148,15 @@
         "links": [
             "7003ee045812a287"
         ],
-        "x": 475,
-        "y": 360,
+        "x": 965,
+        "y": 320,
         "wires": []
     },
     {
         "id": "061eed1d6d4d4390",
         "type": "ui_button",
         "z": "e20c9ffb3fa58107",
+        "d": true,
         "name": "",
         "group": "399ec628dda6c955",
         "order": 5,
@@ -173,11 +174,9 @@
         "topic": "payload",
         "topicType": "msg",
         "x": 100,
-        "y": 320,
+        "y": 260,
         "wires": [
-            [
-                "9d3bd467a8b26baf"
-            ]
+            []
         ]
     },
     {
@@ -188,7 +187,7 @@
         "rules": [
             {
                 "t": "set",
-                "p": "rgb.speed",
+                "p": "rainbow.speed",
                 "pt": "flow",
                 "to": "payload",
                 "tot": "msg"
@@ -199,8 +198,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 350,
-        "y": 880,
+        "x": 360,
+        "y": 860,
         "wires": [
             [
                 "f122103796bad4f7"
@@ -215,7 +214,7 @@
         "rules": [
             {
                 "t": "set",
-                "p": "rgb.brightness",
+                "p": "rainbow.brightness",
                 "pt": "flow",
                 "to": "payload",
                 "tot": "msg"
@@ -226,8 +225,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 360,
-        "y": 940,
+        "x": 380,
+        "y": 920,
         "wires": [
             [
                 "f122103796bad4f7"
@@ -242,7 +241,7 @@
         "rules": [
             {
                 "t": "set",
-                "p": "rgb.saturation",
+                "p": "rainbow.saturation",
                 "pt": "flow",
                 "to": "payload",
                 "tot": "msg"
@@ -253,7 +252,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 360,
+        "x": 380,
         "y": 1000,
         "wires": [
             [
@@ -271,7 +270,7 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "rgb",
+                "to": "rainbow",
                 "tot": "flow"
             }
         ],
@@ -280,8 +279,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 610,
-        "y": 940,
+        "x": 600,
+        "y": 960,
         "wires": [
             [
                 "ba6f7095b4472869"
@@ -308,7 +307,7 @@
         "step": 1,
         "className": "",
         "x": 150,
-        "y": 880,
+        "y": 860,
         "wires": [
             [
                 "1a518560eae779e7"
@@ -335,7 +334,7 @@
         "step": 1,
         "className": "",
         "x": 130,
-        "y": 940,
+        "y": 920,
         "wires": [
             [
                 "acd0c8c15e532c29"
@@ -421,7 +420,7 @@
         "type": "function",
         "z": "e20c9ffb3fa58107",
         "name": "",
-        "func": "var speed = msg.payload.speed;\nvar brightness = msg.payload.brightness;\nvar saturation = msg.payload.saturation;\n\nmsg.payload = \"/\"+speed+\",\"+brightness+\",\"+saturation;\n\nreturn msg;",
+        "func": "but = flow.get(\"rainbow.button\");\nvar speed = msg.payload.speed;\nvar brightness = msg.payload.brightness;\nvar saturation = msg.payload.saturation;\nif(but == true){\n    flow.set(\"rainbow.button\", false);\n    msg.payload = \"/\"+speed+\",\"+brightness+\",\"+saturation;\n    return msg; \n   \n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -434,6 +433,189 @@
                 "b33ebe7c40348c59",
                 "44425e3e6162e389",
                 "f458537799b27d02"
+            ]
+        ]
+    },
+    {
+        "id": "b161d1e50bbc94ea",
+        "type": "ui_button",
+        "z": "e20c9ffb3fa58107",
+        "name": "",
+        "group": "9b6dbb027d91f86b",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Send",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "rbut",
+        "topicType": "flow",
+        "x": 150,
+        "y": 1060,
+        "wires": [
+            [
+                "f2080f381dc4e08b"
+            ]
+        ]
+    },
+    {
+        "id": "f2080f381dc4e08b",
+        "type": "change",
+        "z": "e20c9ffb3fa58107",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "rainbow.button",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 360,
+        "y": 1060,
+        "wires": [
+            [
+                "f122103796bad4f7"
+            ]
+        ]
+    },
+    {
+        "id": "ae6e7e203ae9a7b3",
+        "type": "function",
+        "z": "e20c9ffb3fa58107",
+        "name": "",
+        "func": "but = flow.get(\"color.button\");\nvar color = msg.payload.value;\nif(but == true){\n    flow.set(\"color.button\", false);\n    msg.payload = color;\n    return msg; \n   \n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 840,
+        "y": 340,
+        "wires": [
+            [
+                "d25f4b5ec38aa314"
+            ]
+        ]
+    },
+    {
+        "id": "7a4dcdc187fbe5fd",
+        "type": "ui_button",
+        "z": "e20c9ffb3fa58107",
+        "name": "",
+        "group": "399ec628dda6c955",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Send",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "rbut",
+        "topicType": "flow",
+        "x": 130,
+        "y": 420,
+        "wires": [
+            [
+                "dc6c597fab057d83"
+            ]
+        ]
+    },
+    {
+        "id": "dc6c597fab057d83",
+        "type": "change",
+        "z": "e20c9ffb3fa58107",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "color.button",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 420,
+        "wires": [
+            [
+                "74f43c80a7703cbc"
+            ]
+        ]
+    },
+    {
+        "id": "74f43c80a7703cbc",
+        "type": "change",
+        "z": "e20c9ffb3fa58107",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "color",
+                "tot": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 660,
+        "y": 380,
+        "wires": [
+            [
+                "ae6e7e203ae9a7b3"
+            ]
+        ]
+    },
+    {
+        "id": "5478c2484f8fd481",
+        "type": "change",
+        "z": "e20c9ffb3fa58107",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "color.value",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 340,
+        "wires": [
+            [
+                "74f43c80a7703cbc"
             ]
         ]
     },
