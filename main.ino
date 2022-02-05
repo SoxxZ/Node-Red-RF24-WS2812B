@@ -18,14 +18,8 @@ void interruptFunc();
 
 
 void setup() {
-
-    Serial.begin(9600);
-    while (!Serial) {
-    }
-    if (!radio.begin()) {
-        Serial.println(F("Radio hardware is not responding!!"));
-    while (1) {}
-    }
+    Serial.begin(115200);
+    radio.begin();
     radio.maskIRQ(1,1,0);
     radio.openReadingPipe(0, 0x0000000001);
     radio.setPALevel(RF24_PA_MIN);
@@ -37,12 +31,6 @@ void setup() {
 }
 
 void loop() {
-    if (radio.available()) {
-        radio.read(&text, sizeof(text));
-        Serial.println(text);
-        textStr = String(text);
-    }
-
     if(textStr.startsWith("*")){    
         colorchange(textStr);
     }
@@ -74,7 +62,10 @@ void colorchange(String textcc = ""){
         FastLED.show();
         i++;
     }
-    Serial.println("Color Changed!");
+    Serial.print("Color Changed to: ");
+    Serial.print(textStr);
+    Serial.println();
+    textStr = "";
 }
 
 void rainbow(String textrb = ""){
@@ -95,9 +86,9 @@ void rainbow(String textrb = ""){
     Serial.println("Starting Rainbow animation!");
 
 
-
-    for (int j = 0; j < 255; j++) {
-        for (int i = 0; i < NUM_LEDS; i++) {
+    String k = textStr;
+    for (int j = 0; j < 255 && textStr.startsWith("/") == true && textStr == k ; j++) {
+        for (int i = 0; i < NUM_LEDS && textStr.startsWith("/") == true && textStr == k; i++) {
             leds[i] = CHSV(i - (j * 2), saturation, brightness);
         }
     FastLED.show();
